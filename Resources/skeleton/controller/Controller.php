@@ -15,6 +15,7 @@ use FOS\RestBundle\View\View;
 use \JMS\Serializer\SerializationContext;
 use \Doctrine\DBAL\DBALException;
 use \JMS\Serializer\DeserializationContext;
+use Symfony\Component\HttpFoundation\Request;
 use {{ entity_class }};
 {% endblock use_statements %}
 
@@ -108,10 +109,10 @@ class
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function post{{ controller|capitalize }}sAction() {
+    public function post{{ controller|capitalize }}sAction(Request $request) {
         $serializer = $this->get("{{ serializer }}");
         $entity = $serializer->deserialize(
-            $this->getRequest()->getContent(),
+            $request->getContent(),
             '{{ entity_class }}',
             'json',
             DeserializationContext::create()->setGroups(array("Default", "post"))
@@ -148,7 +149,7 @@ class
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function put{{ controller|capitalize }}Action($id) {
+    public function put{{ controller|capitalize }}Action(Request $request, $id) {
         $manager = $this->get('{{ manager }}');
         $entity = $manager->getRepository('{{ entity_bundle }}:{{ entity }}')->find($id);
         if ($entity === null) {
@@ -156,7 +157,7 @@ class
         }
         $serializer = $this->get("{{ serializer }}");
         $entity = $serializer->deserialize(
-            $this->getRequest()->getContent(),
+            $request->getContent(),
             '{{ entity_class }}',
             'json',
             DeserializationContext::create()->setGroups(array("Default", "put"))
@@ -189,13 +190,13 @@ class
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function patch{{ controller|capitalize }}Action($id) {
+    public function patch{{ controller|capitalize }}Action(Request $request, $id) {
         $manager = $this->get('{{ manager }}');
         $entity = $manager->getRepository('{{ entity_bundle }}:{{ entity }}')->find($id);
         if ($entity === null) {
             return $this->handleView(View::create('', 404));
         }
-        $content = json_decode($this->getRequest()->getContent(), true);
+        $content = json_decode($request->getContent(), true);
         $content['id'] = $id;
         $serializer = $this->get("{{ serializer }}");
         $dContext = DeserializationContext::create()->setGroups(array("Default", "patch"));
