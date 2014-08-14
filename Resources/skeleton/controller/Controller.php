@@ -95,7 +95,7 @@ class
         );
         {%- if mongo %}
 
-        $list = array_values($list->toArray());
+        //$list = array_values($list->toArray());
         {%- endif %}
 
         $context = $this->getSerializerContext(array('list'));
