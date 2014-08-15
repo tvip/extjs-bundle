@@ -184,6 +184,9 @@ class GeneratorService {
                 case 'Tpg\ExtjsBundle\Annotation\Model\Field':
                     $field['type'] = $annotation->type;
                     break;
+                case 'Tpg\ExtjsBundle\Annotation\DefaultValue':
+                    $field['defaultValue'] = $annotation->value;
+                    break;
                 case 'Doctrine\ORM\Mapping\Id':
                 case 'Doctrine\ODM\MongoDB\Mapping\Annotations\Id':
                     $field['useNull'] = true;
@@ -324,6 +327,7 @@ class GeneratorService {
         if (!empty($validators) && !$skipValidator) {
             $structure['validators'] = array_merge($structure['validators'], $validators);
         }
+
         return $field;
     }
 

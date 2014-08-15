@@ -34,6 +34,12 @@ class Car {
     protected $plateNumber;
 
     /**
+     * @ORM\Column(type="datetime", name="date", nullable=true)
+     * @Extjs\DefaultValue("1999-01-01T00:00:00+0000")
+     */
+    protected $date;
+
+    /**
      * @ORM\Column(type="string", nullable=true)
      * @JMS\Type("string")
      * @JMS\Groups({"post"})

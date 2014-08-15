@@ -196,7 +196,18 @@ describe('Rest Proxy in Model', function() {
             expect(originalId).toBe(car.getId());
             expect(car.get('name')).toBe('BMW');
         });
-    })
+    });
+    it('should be properly default value of date field after model has been created', function() {
+        var car = Ext.create('Test.TestBundle.Entity.Car', {
+            name: 'Ford',
+            plateNumber: 'AA1234',
+            password: 'xx'
+        });
+        runs(function() {
+            var expectedDate = Ext.Date.parse("1999-01-01T00:00:00+0000","Y-m-d\\TH:i:sO");
+            expect(Ext.Date.format(car.get('date'),"Y-m-d\\TH:i:sO")).toBe(Ext.Date.format(expectedDate,"Y-m-d\\TH:i:sO"));
+        });
+    });
 });
 describe('Rest Proxy in Store', function() {
     var store = Ext.create('Ext.data.Store', {
