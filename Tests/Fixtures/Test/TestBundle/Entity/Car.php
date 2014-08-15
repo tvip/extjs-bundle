@@ -44,6 +44,7 @@ class Car {
      * @ORM\ManyToOne(targetEntity="Test\TestBundle\Entity\CarOwner", inversedBy="cars", cascade={"persist"})
      * @ORM\JoinColumn(name="car_owner_id", referencedColumnName="id")
      * @JMS\Type("Test\TestBundle\Entity\CarOwner")
+     * @Extjs\UseMapping
      */
     protected $carOwner;
 

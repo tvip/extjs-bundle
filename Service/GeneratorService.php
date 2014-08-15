@@ -162,7 +162,15 @@ class GeneratorService {
         $skipValidator = false;
         $saveField = false;
         $fieldIsId = false;
+        $useMapping = false;
         $annotations = $this->annoReader->getPropertyAnnotations($property);
+
+        foreach($annotations as $annotation) {
+            if(get_class($annotation) === 'Tpg\ExtjsBundle\Annotation\UseMapping') {
+                $useMapping = true;
+                break;
+            }
+        }
         foreach ($annotations as $annotation) {
             $className = get_class($annotation);
             /** Get Constraints from Symfony Validator */
@@ -289,7 +297,8 @@ class GeneratorService {
                     $field['type'] = $this->getEntityColumnType($association['entity'], $annotation->referencedColumnName);
                     $field['useNull'] = true;
                     $association['key'] = $this->convertNaming($annotation->name);
-                    $field['mapping'] = $property->getName() . '.' . $annotation->referencedColumnName;
+                    if($useMapping)
+                        $field['mapping'] = $property->getName() . '.' . $annotation->referencedColumnName;
                     break;
             }
         }
