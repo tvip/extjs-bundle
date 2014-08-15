@@ -5,24 +5,19 @@ php:
   - 5.4
   - 5.5
 env:
-  - SYMFONY_VERSION=2.0.*
-  - SYMFONY_VERSION=2.1.*
-  - SYMFONY_VERSION=2.2.*
   - SYMFONY_VERSION=2.3.*
   - SYMFONY_VERSION=2.4.*
   - SYMFONY_VERSION=2.5.*
-  - SYMFONY_VERSION=dev-master
 
 services:
   - mongodb
 
 before_script:
     - echo "extension=mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    - curl -s http://getcomposer.org/installer | php
-    - php composer.phar require symfony/symfony:${SYMFONY_VERSION}
-    - php composer.phar install --dev
-    - php Tests/app/console generate:rest:controller -t --controller TestTestBundle:MyCar --entity TestTestBundle:Car
-    - php Tests/app/console generate:rest:controller -t --controller TestTestBundle:MyCarOwner --entity TestTestBundle:CarOwner
+    - composer require symfony/symfony:${SYMFONY_VERSION}
+    - composer install --dev
+    - php Tests/app/console generate:rest:controller --controller TestTestBundle:MyCar --entity TestTestBundle:Car
+    - php Tests/app/console generate:rest:controller --controller TestTestBundle:MyCarOwner --entity TestTestBundle:CarOwner
     - php Tests/app/console doctrine:database:create
     - php Tests/app/console doctrine:schema:create
     - php -S 127.0.0.1:8888 -t Tests Tests/app_test.php &
