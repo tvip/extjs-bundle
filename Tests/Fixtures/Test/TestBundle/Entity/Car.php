@@ -5,11 +5,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Tpg\ExtjsBundle\Annotation as Extjs;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
-use \Test\TestBundle\Entity\CarOwner;
 
 /**
  * @Extjs\Model
- * @Extjs\ModelProxy("/mycars")
+ * @Extjs\ModelProxy("_test_test_bundle_api_get_mycars")
  * @ORM\Entity
  * @ORM\Table(name="car")
  */

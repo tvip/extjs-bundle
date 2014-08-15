@@ -3,7 +3,7 @@ namespace Tpg\ExtjsBundle\Service;
 
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\ORM\Mapping\Column;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\OneToMany;
@@ -12,6 +12,8 @@ use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Routing\Router;
 use Tpg\ExtjsBundle\Annotation\Direct;
 use Tpg\ExtjsBundle\Annotation\Model;
 use Tpg\ExtjsBundle\Annotation\ModelProxy;
@@ -30,7 +32,7 @@ class GeneratorService {
     protected $remotingBundles = array();
     protected $fieldsParams = array();
 
-    public function setAnnotationReader($reader) {
+    public function setAnnotationReader(Reader $reader) {
         $this->annoReader = $reader;
     }
 
@@ -38,10 +40,9 @@ class GeneratorService {
         $this->twig = $engine;
     }
 	/**
-     * DI for Router
-     * @param $router
+     * @param Router $router
      */
-    public function setRouter($router) {
+    public function setRouter(Router $router) {
     	$this->router = $router;
     }
 
@@ -58,11 +59,12 @@ class GeneratorService {
     public function generateRemotingApi() {
         $list = array();
         foreach($this->remotingBundles as $bundle) {
-            $controllers = array();
             $bundleRef = new \ReflectionClass($bundle);
             $controllerDir = new Finder();
             $controllerDir->files()->in(dirname($bundleRef->getFileName()).'/Controller/')->name('/.*Controller\.php$/');
             foreach($controllerDir as $controllerFile) {
+                /** @var SplFileInfo $controllerFile */
+
                 $controller = $bundleRef->getNamespaceName() . "\\Controller\\" . substr($controllerFile->getFilename(), 0, -4);
                 $controllerRef = new \ReflectionClass($controller);
                 foreach ($controllerRef->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
@@ -106,8 +108,8 @@ class GeneratorService {
                 'idProperty' => 'id'
             );
             if ($classModelProxyAnnotation !== null) {
-				if(isset($classModelProxyAnnotation->option['url'])){
-            		$classModelProxyAnnotation->option['url'] = $this->router->generate($classModelProxyAnnotation->option['url'],array(),true);
+				if(isset($classModelProxyAnnotation->option['url']) && null !== $this->router->getRouteCollection()->get($classModelProxyAnnotation->option['url'])){
+                    $classModelProxyAnnotation->option['url'] = $this->router->generate($classModelProxyAnnotation->option['url'],array(),"/".Router::RELATIVE_PATH);
             	}
                 $structure['proxy'] = array(
                     'type'=>$classModelProxyAnnotation->name,
@@ -147,7 +149,7 @@ class GeneratorService {
     /**
      * @param \ReflectionProperty $property
      * @param $structure
-     *
+     * @throws \Exception
      * @return array
      */
     protected function buildPropertyAnnotation($property, &$structure) {
@@ -384,6 +386,8 @@ class GeneratorService {
      */
     public function getEntityColumnType($entity, $property) {
         $classRef = new \ReflectionClass($entity);
+        $columnRef = null;
+        $propertyRef = null;
         if ($classRef->hasProperty($property)) {
             $propertyRef = $classRef->getProperty($property);
             $columnRef = $this->annoReader->getPropertyAnnotation($propertyRef, 'Doctrine\ORM\Mapping\Column');
@@ -465,7 +469,7 @@ class GeneratorService {
      * Get the Ext JS Validator
      *
      * @param string $name
-     * @param array $annotation
+     * @param object $annotation
      * @return array
      */
     protected function getValidator($name, $annotation) {
@@ -514,6 +518,7 @@ class GeneratorService {
     /**
      * Get model name of an entity
      * @param $entity string Class name of the entity
+     * @return mixed|null
      */
     public function getModelName($entity) {
         $classRef = new \ReflectionClass($entity);
