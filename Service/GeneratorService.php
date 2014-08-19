@@ -108,7 +108,7 @@ class GeneratorService {
                 'idProperty' => 'id'
             );
             if ($classModelProxyAnnotation !== null) {
-				if(isset($classModelProxyAnnotation->option['url']) && null !== $this->router->getRouteCollection()->get($classModelProxyAnnotation->option['url'])){
+				if(null !== $this->router && isset($classModelProxyAnnotation->option['url']) && null !== $this->router->getRouteCollection()->get($classModelProxyAnnotation->option['url'])){
                     $classModelProxyAnnotation->option['url'] = $this->router->generate($classModelProxyAnnotation->option['url'],array(),"/".Router::RELATIVE_PATH);
             	}
                 $structure['proxy'] = array(
