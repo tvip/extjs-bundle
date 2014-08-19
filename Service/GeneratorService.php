@@ -223,6 +223,8 @@ class GeneratorService {
                         $field['dateFormat'] = \DateTime::ISO8601;
                     }
                     $validators[] = array('type'=>'presence', 'field'=>$this->convertNaming($property->getName()));
+                    if($annotation->nullable)
+                        $field['useNull'] = true;
                     break;
                 case 'JMS\Serializer\Annotation\SerializedName':
                     $field['name'] = $annotation->name;
