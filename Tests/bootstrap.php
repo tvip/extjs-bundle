@@ -23,6 +23,7 @@ $loader->addClassMap(array(
     'Tpg\ExtjsBundle\Annotation\ModelProxy'=>__DIR__.'/../Annotation/ModelProxy.php',
     'Tpg\ExtjsBundle\Annotation\UseMapping'=>__DIR__.'/../Annotation/UseMapping.php',
     'Tpg\ExtjsBundle\Annotation\DefaultValue'=>__DIR__.'/../Annotation/DefaultValue.php',
+    'Tpg\ExtjsBundle\Annotation\UseNull'=>__DIR__.'/../Annotation/UseNull.php',
 ));
 
 $loader = new UniversalClassLoader();

@@ -223,8 +223,16 @@ class GeneratorService {
                         $field['dateFormat'] = \DateTime::ISO8601;
                     }
                     $validators[] = array('type'=>'presence', 'field'=>$this->convertNaming($property->getName()));
+
                     if($annotation->nullable)
                         $field['useNull'] = true;
+
+                    foreach($annotations as $annotationToSearchUseNull){
+                        if(get_class($annotationToSearchUseNull) == 'Tpg\ExtjsBundle\Annotation\UseNull') {
+                            $field['useNull'] = $annotationToSearchUseNull->value;
+                        }
+                    }
+
                     break;
                 case 'JMS\Serializer\Annotation\SerializedName':
                     $field['name'] = $annotation->name;

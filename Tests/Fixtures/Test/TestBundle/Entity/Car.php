@@ -36,6 +36,7 @@ class Car {
     /**
      * @ORM\Column(type="datetime", name="date", nullable=true)
      * @Extjs\DefaultValue("1999-01-01T00:00:00+0000")
+     * @Extjs\UseNull(false)
      */
     protected $date;
 
