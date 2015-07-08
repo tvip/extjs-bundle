@@ -1,11 +1,11 @@
 extjs_generate_model:
-    pattern:  /generateModel.js
+    path:  /generateModel.js
     defaults: { _controller: TpgExtjsBundle:Generator:generateModel }
 
 extjs_remote_api:
-    pattern:  /remoteapi.js
+    path:  /remoteapi.js
     defaults: { _controller: TpgExtjsBundle:Generator:generateRemoteApi }
 
 extjs_remoting:
-    pattern:  /remoting/{bundle}
+    path:  /remoting/{bundle}
     defaults: { _controller: TpgExtjsBundle:Generator:remoting }
