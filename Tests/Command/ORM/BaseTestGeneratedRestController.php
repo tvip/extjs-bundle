@@ -4,6 +4,7 @@ namespace Tpg\ExtjsBundle\Tests\Command\ORM;
 use Doctrine\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand;
 use Doctrine\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand;
 use Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand;
+use Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Routing\Loader\RestYamlCollectionLoader;
 
@@ -65,12 +66,19 @@ class BaseTestGeneratedRestController extends Base {
         $app->addCommands(array(
             new CreateDatabaseDoctrineCommand(),
             new CreateSchemaDoctrineCommand(),
+            new DropSchemaDoctrineCommand(),
         ));
         $kernel->boot();
         $command = $app->find('doctrine:database:create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array(
             'command' => $command->getName(),
+        ));
+        $command = $app->find('doctrine:schema:drop');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array(
+            'command' => $command->getName(),
+            '--force' => true,
         ));
         $command = $app->find('doctrine:schema:create');
         $commandTester = new CommandTester($command);
