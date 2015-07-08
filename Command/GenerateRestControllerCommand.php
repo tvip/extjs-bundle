@@ -72,7 +72,7 @@ EOT
 
         Validators::validateEntityName($input->getOption('entity'));
 
-        $dialog = $this->getDialogHelper();
+        $questionHelper = $this->getQuestionHelper();
 
         if ($input->getOption('trait')) {
             if (PHP_MAJOR_VERSION < 5 || PHP_MINOR_VERSION < 4) {
@@ -96,7 +96,7 @@ EOT
             }
         }
 
-        $dialog->writeSection($output, 'Controller generation: ' . $controller . 'Controller (' . $bundle->getName() . ')');
+        $questionHelper->writeSection($output, 'Controller generation: ' . $controller . 'Controller (' . $bundle->getName() . ')');
 
         /** @var RestControllerGenerator $generator */
         $generator = $this->getGenerator($bundle);
@@ -120,7 +120,7 @@ EOT
 
         $output->writeln('Generating the bundle code: <info>OK</info>');
 
-        $dialog->writeGeneratorSummary($output, array());
+        $questionHelper->writeGeneratorSummary($output, array());
 
     }
 
