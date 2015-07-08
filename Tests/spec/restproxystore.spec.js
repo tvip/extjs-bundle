@@ -109,18 +109,20 @@ describe('Rest Proxy in Model', function() {
             plateNumber: 'AA1234',
             password: 'xx'
         });
+        var car_owner_id;
         var runned = false;
         runs(function() {
             car.save({
                 callback: function(record) {
                     var owner = Ext.create('Test.TestBundle.Entity.CarOwner', {
-                        name: 'James'
+                        name: 'James Y'
                     });
                     owner.save({
                         callback: function(record) {
                             car.setCarOwner(record, {
                                 callback: function() {
                                     runned = true;
+                                    car_owner_id = car.get('car_owner_id');
                                 }
                             });
                         }
@@ -131,9 +133,38 @@ describe('Rest Proxy in Model', function() {
         waitsFor(function() {
             return runned;
         });
+
+        // Reload Car entity from REST proxy. Car_owner_id should still be there.
+        var runned1 = false;
+        runs(function() {
+            Test.TestBundle.Entity.Car.load(car.get('id'), {
+                callback: function(record) {
+                    record.set('name', 'Audi');
+
+                    // Save and reload again. If car_owner_id was not there the belongsTo association is destroyed.
+                    record.save({
+                        callback: function(record) {
+                            Test.TestBundle.Entity.Car.load(car.get('id'), {
+                                callback: function(record) {
+                                    car = record;
+                                    runned1 = true;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        waitsFor(function() {
+            return runned1;
+        });
+
+
         runs(function() {
             expect(car.getCarOwner()).not.toBeNull();
-            expect(car.getCarOwner().getId()).toBeGreaterThan(0);
+            expect(car.get('car_owner_id')).toBe(car_owner_id);
+            expect(car.getCarOwner().get('name')).toBe('James Y');
+            expect(car.get('name')).toBe('Audi');
         });
     });
     it('should update entity', function() {
@@ -165,7 +196,18 @@ describe('Rest Proxy in Model', function() {
             expect(originalId).toBe(car.getId());
             expect(car.get('name')).toBe('BMW');
         });
-    })
+    });
+    it('should be properly default value of date field after model has been created', function() {
+        var car = Ext.create('Test.TestBundle.Entity.Car', {
+            name: 'Ford',
+            plateNumber: 'AA1234',
+            password: 'xx'
+        });
+        runs(function() {
+            var expectedDate = Ext.Date.parse("1999-01-01T00:00:00+0000","Y-m-d\\TH:i:sO");
+            expect(Ext.Date.format(car.get('date'),"Y-m-d\\TH:i:sO")).toBe(Ext.Date.format(expectedDate,"Y-m-d\\TH:i:sO"));
+        });
+    });
 });
 describe('Rest Proxy in Store', function() {
     var store = Ext.create('Ext.data.Store', {

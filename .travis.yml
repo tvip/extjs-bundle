@@ -1,15 +1,20 @@
 language: php
 
 php:
-    - 5.4
+  - 5.4
+  - 5.5
+env:
+  - SYMFONY_VERSION=2.3.*
+  - SYMFONY_VERSION=2.4.*
+  - SYMFONY_VERSION=2.5.*
 
 services:
-    - mongodb
+  - mongodb
 
 before_script:
     - echo "extension=mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-    - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install --dev
+    - composer require symfony/symfony:${SYMFONY_VERSION}
+    - composer install --dev
     - php Tests/app/console generate:rest:controller -t --controller TestTestBundle:MyCar --entity TestTestBundle:Car
     - php Tests/app/console generate:rest:controller -t --controller TestTestBundle:MyCarOwner --entity TestTestBundle:CarOwner
     - php Tests/app/console doctrine:database:create
@@ -19,6 +24,6 @@ before_script:
     - sh -e /etc/init.d/xvfb start
 
 script:
-    - phantomjs --web-security=no Tests/testrunner.js http://127.0.0.1:8888/SpecRunner.html
-    - php Tests/app/console doctrine:database:drop --force
-    - phpunit -c phpunit.xml.dist
+  - phantomjs --web-security=no Tests/testrunner.js http://127.0.0.1:8888/SpecRunner.html
+  - php Tests/app/console doctrine:database:drop --force
+  - phpunit -c phpunit.xml.dist
