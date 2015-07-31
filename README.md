@@ -16,7 +16,7 @@ Requirement
 -----------
 Mandatory
  - Symfony ~2.5
- - Serializer library from JMS 0.13.*
+ - Serializer library from JMS 0.13.*, ~1.0
  - Doctrine ORM or ODM
  - Generator from Sensio ~2.5
 
